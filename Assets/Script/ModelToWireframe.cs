@@ -5,8 +5,7 @@ using UnityEngine;
 public class ModelToWireframe : MonoBehaviour
 {
 	private List<Transform> ShapeL; 
-	private List<LineRenderer> lineL;
-	public Material lineMat, fillMat;
+	private Material lineMat, fillMat;
 	
     void Start()
     {
@@ -18,13 +17,33 @@ public class ModelToWireframe : MonoBehaviour
 		
 	}
 	
-	void ShapeWire(){	
+	void ShapeWire(){
+		switch (tag) {
+			case ("GreenTeam"):
+				lineMat = Resources.Load("Materials/gridGreen") as Material;
+				fillMat = Resources.Load("Materials/gridBlueFill") as Material;
+				break;
+			case ("BlueTeam"):
+				lineMat = Resources.Load("Materials/gridGreen") as Material;
+				fillMat = Resources.Load("Materials/gridBlueFill") as Material;
+				break;
+			case ("RedTeam"):
+				lineMat = Resources.Load("Materials/gridRed") as Material;
+				fillMat = Resources.Load("Materials/gridRedFill") as Material;
+				break;
+			case ("OrangeTeam"):
+				lineMat = Resources.Load("Materials/gridOrange") as Material;
+				fillMat = Resources.Load("Materials/gridOrangeFill") as Material;
+				break;
+			default:
+				break;
+		}
+
 		foreach(Transform tr in ShapeL){
 			LineRenderer LR = tr.gameObject.AddComponent(typeof(LineRenderer)) as LineRenderer;
 			LR.useWorldSpace = false;
 			LR.material = lineMat;
-			//LR.startColor = Color.green;
-			//LR.endColor = Color.green;
+
 			LR.receiveShadows = false;
 			LR.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 			
