@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Move1 : MonoBehaviour
 {
-    public bool isPlayer = false;
+    public bool isPlayer = false, canMove = true;
     public float moveInputFactor = 5f;
     public Vector3 inputVelocity;
     public Vector3 worldVelocity;
@@ -37,7 +37,7 @@ public class Move1 : MonoBehaviour
     }
 
     void Update() {		
-        if (isPlayer && SM.PlayState) Move();
+        if (isPlayer && canMove && SM.PlayState) Move();
     }
 
     private void Move() {

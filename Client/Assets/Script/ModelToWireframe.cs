@@ -5,7 +5,7 @@ using UnityEngine;
 public class ModelToWireframe : MonoBehaviour
 {
 	private List<Transform> ShapeL; 
-	private Material lineMat, fillMat;
+	public Material lineMat, fillMat;
 	
     void Start()
     {
@@ -21,10 +21,10 @@ public class ModelToWireframe : MonoBehaviour
 		switch (tag) {
 			case ("GreenTeam"):
 				lineMat = Resources.Load("Materials/gridGreen") as Material;
-				fillMat = Resources.Load("Materials/gridBlueFill") as Material;
+				fillMat = Resources.Load("Materials/gridGreenFill") as Material;
 				break;
 			case ("BlueTeam"):
-				lineMat = Resources.Load("Materials/gridGreen") as Material;
+				lineMat = Resources.Load("Materials/gridBlue") as Material;
 				fillMat = Resources.Load("Materials/gridBlueFill") as Material;
 				break;
 			case ("RedTeam"):

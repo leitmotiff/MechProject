@@ -16,7 +16,6 @@ public class MechGunA : MonoBehaviour
 	private float timeD;
 	private Camera cam;
 	public Transform ArmModel;
-	public GameObject bulletHitSpark;
 	private Transform objectHit;
 	private Vector3 aimAngles = Vector3.zero;
 	public int hitDmg = 1;
@@ -64,9 +63,11 @@ public class MechGunA : MonoBehaviour
 	#endregion
 	
 	#region Gun List
+	// Tech Attack
 	void Gun_2(){
 	
 	}
+	// Charge Shot
 	void Gun_1(){
 		if(Input.GetButtonDown("Fire1") && SM.PlayState)
 			ChargeFireCtrl(true);
@@ -74,6 +75,7 @@ public class MechGunA : MonoBehaviour
 			ChargeFireCtrl(false);
 		}
 	}
+	// Endless Gat
 	void Gun_0(){
 		if(Input.GetButtonDown("Fire1") && SM.PlayState)
 			GatCtrl(true);
@@ -82,8 +84,28 @@ public class MechGunA : MonoBehaviour
 		}
 	}
 	#endregion
-	
+
 	#region Gun Control
+	private void TechLasso(bool go) {
+		if (go) {
+			StartCoroutine("TechLasso");
+			StartCoroutine(CountDownTimer(6f));
+		}
+		else {
+			StopCoroutine("TechLasso");
+			StopCoroutine(CountDownTimer(6f));
+			closeTimer();
+		}
+	}
+	private IEnumerator TechLasso(){
+		yield return new WaitForSeconds(3f);
+		//Waiit for a few seconds, then spawn blue rope link here
+
+		yield return new WaitForSeconds(3f);
+		//If time has completed and link has not been severed, apply status to enemy
+
+	}
+
 	private void ChargeFireCtrl(bool go){
 		if(go){
 			StartCoroutine("ChargeFire");
@@ -163,6 +185,7 @@ public class MechGunA : MonoBehaviour
 		}
 	}
 	private IEnumerator BulletHitSpark(RaycastHit hit){
+		GameObject bulletHitSpark = Resources.Load("Effect/Explosion9") as GameObject;
 		GameObject go = Instantiate(bulletHitSpark, hit.point, new Quaternion(0,0,0,0));
 		go.transform.localScale *= 1f;
 		yield return new WaitForSeconds(.2f);
