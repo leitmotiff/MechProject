@@ -1,0 +1,12 @@
+{"More HULL", "+HULL by 5 pts", 0, -1, 5.0, 0.0, 100}
+{"More ARMOR", "+ARMOR by 5 pts", 1, -1, 5.0, 0.0, 100}
+{"More SENSORS", "+SENSORS by 5 pts", 2, -1, 5.0, 0.0, 100}
+{"Lower SAVETARGET", "na", 3, -1, -5.0, 0.0, 100}
+{"More HP", "+Health by 5 pts", 4, -1, 5.0, 0.0, 100}
+{"Higher REPAIRCAP", "+Repair Cap", 5, -1, 5.0, 0.0, 100}
+{"More EVASION", "+Evasion", 6, -1, 5.0, 0.0, 100}
+{"More SPEED", "na", 7, -1, 5.0, 0.0, 100}
+{"More DEF", "na", 8, -1, 5.0, 0.0, 100}
+{"More TECHA", "na", 9, -1, 5.0, 0.0, 100}
+{"More SP", "na", 10, -1, 5.0, 0.0, 100}
+{"Higher HEATCAP", "na", 11, -1, 5.0, 0.0, 100}

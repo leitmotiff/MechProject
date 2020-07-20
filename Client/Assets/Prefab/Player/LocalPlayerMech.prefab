@@ -380,12 +380,15 @@ GameObject:
   - component: {fileID: 4161985737628193069}
   - component: {fileID: 4161985737628193042}
   - component: {fileID: 4161985737628193070}
-  - component: {fileID: 698577329830816246}
-  - component: {fileID: 835853246}
   - component: {fileID: 6010960417531023369}
+  - component: {fileID: 1702502377}
+  - component: {fileID: 1702502378}
+  - component: {fileID: 835853246}
+  - component: {fileID: 698577329830816246}
+  - component: {fileID: 1702502388}
   m_Layer: 0
   m_Name: LocalPlayerMech
-  m_TagString: RedTeam
+  m_TagString: GreenTeam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -439,17 +442,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayer: 1
-  moveInputFactor: 5
-  inputVelocity: {x: 0, y: 0, z: 0}
-  worldVelocity: {x: 0, y: 0, z: 0}
+  canMove: 1
+  canWallRide: 1
+  canFlight: 0
+  isTouchingWall: 0
   walkSpeed: 30
   sprintSpeed: 50
+  airSpeed: 10
   jumpForce: 3000
-  maxRotationSpeed: 20
-  averageRotationRadius: 100
+  mSpeed: 0
   invertYAxis: 0
   isGrounded: 0
-  anim: {fileID: 0}
 --- !u!95 &4161985737628193069
 Animator:
   serializedVersion: 3
@@ -498,22 +501,73 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lineMat: {fileID: 0}
   fillMat: {fileID: 0}
---- !u!54 &698577329830816246
-Rigidbody:
+--- !u!114 &6010960417531023369
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4161985737628193040}
-  serializedVersion: 2
-  m_Mass: 5000
-  m_Drag: 0.05
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1a7c68ab4b247742a081d9f7fb64f9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cStats:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  bStats:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  coins: 0
+--- !u!114 &1702502377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4161985737628193040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 380953905389ec348b15c4863cf937df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShopPanel: {fileID: 0}
+  AimPanel: {fileID: 0}
+  cursorTexture: {fileID: 2800000, guid: 723ce5ab8a891964b8669485ef4e194f, type: 3}
+--- !u!114 &1702502378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4161985737628193040}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bdcd1c6445aa2c44941c68487443478, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camTransform: {fileID: 0}
 --- !u!65 &835853246
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -527,7 +581,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.9087234, y: 5.531088, z: 1.2466296}
   m_Center: {x: 0, y: -0.73110867, z: 0}
---- !u!114 &6010960417531023369
+--- !u!54 &698577329830816246
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4161985737628193040}
+  serializedVersion: 2
+  m_Mass: 5000
+  m_Drag: 0.05
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!114 &1702502388
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -536,9 +606,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4161985737628193040}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1a7c68ab4b247742a081d9f7fb64f9a, type: 3}
+  m_Script: {fileID: 11500000, guid: 1091b6f9e0e0b8541b52765432b39557, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ObjectMass: 5000
+  gravityF: 9.8
+  gravMod: 1
 --- !u!1 &4161985737649841552
 GameObject:
   m_ObjectHideFlags: 0

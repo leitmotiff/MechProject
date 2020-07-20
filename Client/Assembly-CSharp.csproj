@@ -89,6 +89,7 @@
     <Compile Include="Assets\3rdParty\IKgit\Assets\Scripts\SpaceshipController.cs" />
     <Compile Include="Assets\3rdParty\IKgit\Assets\Scripts\SpikeGen.cs" />
     <Compile Include="Assets\3rdParty\IKgit\Assets\Scripts\TimeController.cs" />
+    <Compile Include="Assets\ColorToTeam.cs" />
     <Compile Include="Assets\GameClient\Scripts\CameraController.cs" />
     <Compile Include="Assets\GameClient\Scripts\Client.cs" />
     <Compile Include="Assets\GameClient\Scripts\ClientHandle.cs" />
@@ -102,7 +103,9 @@
     <Compile Include="Assets\GameClient\Scripts\ProjectileManager.cs" />
     <Compile Include="Assets\GameClient\Scripts\ThreadManager.cs" />
     <Compile Include="Assets\GameClient\Scripts\UIManager.cs" />
+    <Compile Include="Assets\ManualPhysics.cs" />
     <Compile Include="Assets\MenuController.cs" />
+    <Compile Include="Assets\Resources\StoreButtonBehave.cs" />
     <Compile Include="Assets\Script\AI\TestAI_1.cs" />
     <Compile Include="Assets\Script\AI\TestAI_2.cs" />
     <Compile Include="Assets\Script\AI\TestAI_3.cs" />
@@ -140,6 +143,7 @@
     <None Include="Assets\3rdParty\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
     <None Include="Assets\3rdParty\TextMesh Pro\Resources\Shaders\TMP_SDF.shader" />
     <None Include="Assets\3rdParty\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+    <None Include="Assets\Resources\StoreItemLibrary.txt" />
     <None Include="Assets\3rdParty\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\3rdParty\TextMesh Pro\Resources\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\3rdParty\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />

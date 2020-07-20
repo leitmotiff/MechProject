@@ -11,6 +11,7 @@ public class DefenseTower : MonoBehaviour
 		"OrangeTeam"};
 		
 	private float radius, range = 5;
+	public float timeBetweenShots = 1f;
 	public int hitDmg = 20;
 	public bool canFight = true;
 	public bool isFighting = false;
@@ -68,7 +69,7 @@ public class DefenseTower : MonoBehaviour
 				DebugShot(target);
 			}
 			catch{}
-			yield return new WaitForSeconds(3f);
+			yield return new WaitForSeconds(timeBetweenShots);
 		}
 	}
 	

@@ -4,25 +4,25 @@ using UnityEngine;
 
 public class Move1 : MonoBehaviour
 {
-    public bool isPlayer = false, canMove = true;
-    public float moveInputFactor = 5f;
-    public Vector3 inputVelocity;
-    public Vector3 worldVelocity;
-    public float walkSpeed = 2f, sprintSpeed = 5f, jumpForce = 50f;
+    public bool isPlayer = false, canMove = true, canWallRide = false, canFlight = false,
+		isTouchingWall = false;
+    private float moveInputFactor = 5f;
+    private Vector3 inputVelocity;
+	private Vector3 worldVelocity;
+    public float walkSpeed = 2f, sprintSpeed = 5f, airSpeed = 2f, jumpForce = 50f;
 	
     private float rotateInputFactor = 100f, rotationSpeed = 100f;
-	public float maxRotationSpeed = 40f;
-    public float averageRotationRadius = 10f;
-    private float mSpeed = 0, rxSpeed = 0, rySpeed = 0;
+	private float maxRotationSpeed = 20f;
+	private float averageRotationRadius = 100f;
+	public float mSpeed = 0;
+	private float rxSpeed = 0, rySpeed = 0;
 	public bool invertYAxis = false, isGrounded = false;
 	private bool checkYStatus = true;
 	
 	private Rigidbody rb;
 	private Transform targetCam;
 	private Camera playerCam;
-	
-	public Animator anim;
-
+	private Animator anim;
 	private StateManager SM;
 	
 	void Awake(){
@@ -31,18 +31,16 @@ public class Move1 : MonoBehaviour
 		anim = GetComponent<Animator>();
 		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
 	}
-
     void Start() {
 		StartCoroutine(UpdateYStatus());
     }
-
     void Update() {		
         if (isPlayer && canMove && SM.PlayState) Move();
-    }
-
+		
+	}
     private void Move() {
 		//	WASD
-        mSpeed = (Input.GetButton("Fire3") ? sprintSpeed : walkSpeed);
+        mSpeed = isGrounded ? (Input.GetButton("Fire3") ? sprintSpeed : walkSpeed) : walkSpeed;
         
 		Vector3 localInput = Vector3.ClampMagnitude(transform.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"))), 1f);
 		inputVelocity = Vector3.MoveTowards(inputVelocity, localInput, Time.deltaTime * moveInputFactor);
@@ -92,10 +90,25 @@ public class Move1 : MonoBehaviour
 		{
 			isGrounded = false;
 			rb.AddForce(Vector3.up * jumpForce * 1000);
-		}	
-    
-	}
+		}
 
+		//	WallRide
+		if (canWallRide && Input.GetKey(KeyCode.Space)
+			&& !isGrounded
+			&& isTouchingWall)	//Mathf.Abs(rb.velocity.y) <= 0.5f)
+		{
+			isGrounded = false;
+			
+		}
+
+		//	Flight
+		if (canFlight && Input.GetKeyDown(KeyCode.Space)
+			&& !isGrounded
+			&& !isTouchingWall) 
+		{
+			
+		}
+	}
 	private IEnumerator UpdateYStatus(){
 		float y1, y2;
 		while(checkYStatus){
@@ -109,6 +122,24 @@ public class Move1 : MonoBehaviour
 				isGrounded = true;
 			if(y1 == 0 && y2 == 0)
 				isGrounded = true;
+		}
+	}
+	void OnCollisionEnter(Collision collision) {
+		foreach (ContactPoint contact in collision.contacts) {
+			Debug.DrawRay(contact.point, contact.normal, Color.white);
+		}
+
+		if (collision.gameObject.name.Contains("Cube")) {
+			isTouchingWall = true;
+		}
+	}
+	void OnCollisionExit(Collision collision) {
+		foreach (ContactPoint contact in collision.contacts) {
+			Debug.DrawRay(contact.point, contact.normal, Color.white);
+		}
+
+		if (collision.gameObject.name.Contains("Cube")) {
+			isTouchingWall = false;
 		}
 	}
 }

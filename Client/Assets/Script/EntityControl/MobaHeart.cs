@@ -9,6 +9,7 @@ public class MobaHeart : MonoBehaviour
 	
     void Start()
     {
+		//heart = transform.GetChild(0).gameObject;
 		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
         StartCoroutine(LoseCondition());
     }

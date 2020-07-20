@@ -19,7 +19,7 @@ public class minionSpawner : MonoBehaviour
 	
     void Start()
     {
-		switch(PlayerTeam){
+		/*switch(PlayerTeam){
 			case "GreenTeam":	
 				teamMat = Resources.Load("Materials/gridGreen")as Material;
 				break;
@@ -28,7 +28,7 @@ public class minionSpawner : MonoBehaviour
 				break;
 			default:
 				break;
-		}
+		}*/
         StartCoroutine(SpawnMinions());
     }
 
@@ -46,8 +46,8 @@ public class minionSpawner : MonoBehaviour
 					newMin.GetComponent<DummyMove>().PathGO = PathGO;
 				newMin.GetComponent<DummyMove>().movementType = 3;
 				newMin.tag = PlayerTeam;
-				newMin.GetComponent<MeshRenderer>().material = teamMat;
-				
+				//newMin.GetComponent<MeshRenderer>().material = teamMat;
+				newMin.SetActive(true);
 				yield return new WaitForSeconds(tBMinions);
 			}
 			yield return new WaitForSeconds(tBGroups);
