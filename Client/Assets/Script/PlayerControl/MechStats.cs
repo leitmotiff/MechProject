@@ -6,11 +6,24 @@ public class MechStats : MonoBehaviour
 {
     //public float 0HULL, 1ARMOR, 2SENSORS, 3SAVETARGET, 4HP, 5REPAIRCAP, 6EVASION, 
     //              7SPEED, 8EDEF, 9TECHA, 10SP, 11HEATCAP;
-    public float[] cStats = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    public float[] bStats = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    public float[] cStats = { 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0};
+    public float[] bStats = { 0, 0, 0, 0, 100, 0, 0, 0, 0, 0, 0, 0 };
     public List<StoreItem> Items;
     public int coins = 100;
+    public float tempHP = 100;
+    private float maxX, maxY, maxHP;
+    public RectTransform HealthRect;
 
+	private void Start() {
+        maxHP = cStats[4];
+        tempHP = maxHP;
+        maxX = HealthRect.sizeDelta.x;
+        maxY = HealthRect.sizeDelta.y;
+    }
+
+	private void Update() {
+        HealthRect.sizeDelta = Vector2.Lerp(HealthRect.sizeDelta, new Vector2(maxX * tempHP / maxHP, maxY), Time.deltaTime);
+    }
     public void ResetBaseStats() {
         
     }
@@ -23,4 +36,5 @@ public class MechStats : MonoBehaviour
                 cStats[i.id2] = bStats[i.id2] + i.val2;
         }
 	}
+
 }

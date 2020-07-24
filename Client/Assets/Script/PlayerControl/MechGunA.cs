@@ -27,6 +27,8 @@ public class MechGunA : MonoBehaviour
 	private TextMeshProUGUI timertxt;
 	private StateManager SM;
 	private StatTracker ST;
+
+	public GameObject GunCanvas, MF_image;
 	
 	#region Startup
 	private void Awake(){
@@ -124,9 +126,11 @@ public class MechGunA : MonoBehaviour
 	
 	private void GatCtrl(bool go){
 		if(go){
+			GunCanvas.SetActive(true);
 			StartCoroutine("GatGun");
 		}
 		else{
+			GunCanvas.SetActive(false);
 			StopCoroutine("GatGun");
 		}
 	}
@@ -163,7 +167,7 @@ public class MechGunA : MonoBehaviour
 	}
 	private void DebugAimShot(){
 		RaycastHit hit;
-		
+		StartCoroutine(MuzzleFlash());
 		if (Physics.Raycast(ray, out hit)){
             objectHit = hit.transform;
 			Debug.DrawRay(transform.position, ray.direction * hit.distance, Color.blue, 2f);
@@ -190,6 +194,11 @@ public class MechGunA : MonoBehaviour
 		go.transform.localScale *= 1f;
 		yield return new WaitForSeconds(.2f);
 		Destroy(go);
+	}
+	private IEnumerator MuzzleFlash(){
+		MF_image.SetActive(true);
+		yield return new WaitForSeconds(0.02f);
+		MF_image.SetActive(false);
 	}
 	#endregion
 	

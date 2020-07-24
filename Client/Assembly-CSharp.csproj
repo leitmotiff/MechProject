@@ -103,6 +103,7 @@
     <Compile Include="Assets\GameClient\Scripts\ProjectileManager.cs" />
     <Compile Include="Assets\GameClient\Scripts\ThreadManager.cs" />
     <Compile Include="Assets\GameClient\Scripts\UIManager.cs" />
+    <Compile Include="Assets\GatRotate.cs" />
     <Compile Include="Assets\ManualPhysics.cs" />
     <Compile Include="Assets\MenuController.cs" />
     <Compile Include="Assets\Resources\StoreButtonBehave.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Assets\Script\PlayerControl\MechGunA.cs" />
     <Compile Include="Assets\Script\PlayerControl\MechStats.cs" />
     <Compile Include="Assets\Script\PlayerControl\Move1.cs" />
+    <Compile Include="Assets\Script\PlayerControl\Move2.cs" />
     <Compile Include="Assets\Script\PlayerControl\PilotMove1.cs" />
     <Compile Include="Assets\Script\Rotater.cs" />
     <Compile Include="Assets\Script\StatTracker.cs" />

@@ -34,8 +34,13 @@ public class Move1 : MonoBehaviour
     void Start() {
 		StartCoroutine(UpdateYStatus());
     }
-    void Update() {		
-        if (isPlayer && canMove && SM.PlayState) Move();
+    void Update() 
+	{
+		if (isPlayer && canMove && SM.PlayState) 
+		{
+			Move();
+			CamMove();
+		}
 		
 	}
     private void Move() {
@@ -50,39 +55,6 @@ public class Move1 : MonoBehaviour
 		if(Mathf.Abs(localInput.x) > 0.5f || Mathf.Abs(localInput.z) > 0.5f) {anim.SetBool("isMoving", true);}
 		else {anim.SetBool("isMoving", false);}
 		
-		//	Rotation
-        float rx = Input.mousePosition.x, ry = Input.mousePosition.y;
-		float rxnorm = 0f, rynorm = 0f;
-		float xbuff = 0.7f, ybuff = 0.7f;
-		if (rx > Screen.width* xbuff)
-			rxnorm = rx/Screen.width;
-		if (rx < Screen.width*(1-xbuff))
-			rxnorm = (Screen.width* (1 - xbuff) - rx)/(Screen.width*.7f) * -1;
-		
-		if (ry > Screen.height* ybuff)
-			rynorm = ry/Screen.height;
-		if (ry < Screen.height* (1 - ybuff))
-			rynorm = (Screen.height* (1 - ybuff) - ry)/(Screen.height*ybuff) * -1;
-		if(!invertYAxis)
-			rynorm*=-1;
-		
-		rxSpeed = Mathf.MoveTowards(rxSpeed, rxnorm * rotationSpeed, rotateInputFactor * Time.deltaTime);
-        rySpeed = Mathf.MoveTowards(rySpeed, rynorm * rotationSpeed, rotateInputFactor * Time.deltaTime);
-		if(rxSpeed > maxRotationSpeed)
-			rxSpeed = maxRotationSpeed;
-		if(rySpeed > maxRotationSpeed)
-			rySpeed = maxRotationSpeed;
-		transform.Rotate(0f, rxSpeed * Time.deltaTime, 0f);
-		
-		playerCam.transform.Rotate(rySpeed * Time.deltaTime, 0f, 0f);
-		
-		if(playerCam.transform.eulerAngles.x > 20f && playerCam.transform.eulerAngles.x < 30f)
-			playerCam.transform.eulerAngles = new Vector3(19.8f,playerCam.transform.eulerAngles.y,0);
-		if(playerCam.transform.eulerAngles.x < 340f && playerCam.transform.eulerAngles.x > 30f)
-			playerCam.transform.eulerAngles = new Vector3(340.2f,playerCam.transform.eulerAngles.y,0);		
-		//Vector3 vec = Vector3.zero;
-		//playerCam.transform.eulerAngles = Vector3.SmoothDamp(playerCam.transform.eulerAngles, targetAngles, ref vec, 3f);
-
 		//	JUMP
 		if (Input.GetKeyDown(KeyCode.Space)
 			&& isGrounded
@@ -108,6 +80,42 @@ public class Move1 : MonoBehaviour
 		{
 			
 		}
+	}
+	private void CamMove()
+	{
+		//	Rotation
+		float rx = Input.mousePosition.x, ry = Input.mousePosition.y;
+		float rxnorm = 0f, rynorm = 0f;
+		float xbuff = 0.7f, ybuff = 0.7f;
+		if (rx > Screen.width * xbuff)
+			rxnorm = rx / Screen.width;
+		if (rx < Screen.width * (1 - xbuff))
+			rxnorm = (Screen.width * (1 - xbuff) - rx) / (Screen.width * .7f) * -1;
+
+		if (ry > Screen.height * ybuff)
+			rynorm = ry / Screen.height;
+		if (ry < Screen.height * (1 - ybuff))
+			rynorm = (Screen.height * (1 - ybuff) - ry) / (Screen.height * ybuff) * -1;
+		if (!invertYAxis)
+			rynorm *= -1;
+
+		rxSpeed = Mathf.MoveTowards(rxSpeed, rxnorm * rotationSpeed, rotateInputFactor * Time.deltaTime);
+		rySpeed = Mathf.MoveTowards(rySpeed, rynorm * rotationSpeed, rotateInputFactor * Time.deltaTime);
+		if (rxSpeed > maxRotationSpeed)
+			rxSpeed = maxRotationSpeed;
+		if (rySpeed > maxRotationSpeed)
+			rySpeed = maxRotationSpeed;
+		transform.Rotate(0f, rxSpeed * Time.deltaTime, 0f);
+
+		playerCam.transform.Rotate(rySpeed * Time.deltaTime, 0f, 0f);
+
+		if (playerCam.transform.eulerAngles.x > 20f && playerCam.transform.eulerAngles.x < 30f)
+			playerCam.transform.eulerAngles = new Vector3(19.8f, playerCam.transform.eulerAngles.y, 0);
+		if (playerCam.transform.eulerAngles.x < 340f && playerCam.transform.eulerAngles.x > 30f)
+			playerCam.transform.eulerAngles = new Vector3(340.2f, playerCam.transform.eulerAngles.y, 0);
+		//Vector3 vec = Vector3.zero;
+		//playerCam.transform.eulerAngles = Vector3.SmoothDamp(playerCam.transform.eulerAngles, targetAngles, ref vec, 3f);
+
 	}
 	private IEnumerator UpdateYStatus(){
 		float y1, y2;
