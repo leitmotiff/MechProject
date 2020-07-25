@@ -7,7 +7,7 @@ public class Move2 : MonoBehaviour
 {
 	#region Old Var
 	public bool isPlayer = false, canMove = true, canWallRide = false, canJump = true, canFlight = false,
-		isTouchingWall = false;
+		isTouchingWall = false, isRidingWall = false;
 	public bool invertYAxis = false, isGrounded = false;
 	public float InputFactor = 1000f;
     private Vector3 inputVelocity;
@@ -15,7 +15,7 @@ public class Move2 : MonoBehaviour
     public float walkSpeed = 2f, sprintSpeed = 5f, airSpeed = 2f, jumpForce = 50f;
 	
     private float rotateInputFactor = 100f, rotationSpeed = 100f;
-	private float maxRotationSpeed = 20f;
+	private float maxRotationSpeed = 40f;
 	public float mSpeed = 0;
 	private float rxSpeed = 0, rySpeed = 0;
 	private bool checkYStatus = true;
@@ -26,12 +26,18 @@ public class Move2 : MonoBehaviour
 	private Animator anim;
 	private StateManager SM;
 	#endregion
-
+	
+	public float JumpRegen = 1, SprRegen = 1, SprUsage = 0.1f;
+	private bool sparking = false;
 	private float maxX, maxY, tempJ = 100, tempS = 100;
 	public RectTransform JumpRect, SprintRect;
 	private Ray groundRay;
+	private Collision ActiveWall;
 	private ManualPhysics MP;
-	
+
+	private Ray WallRay;
+	private Vector3 camBasePos, camLerpPos;
+
 	void Awake(){
 		groundRay = new Ray(transform.position, Vector3.down);
 		MP = GetComponent<ManualPhysics>();
@@ -42,9 +48,11 @@ public class Move2 : MonoBehaviour
 	}
     void Start() {
 		//StartCoroutine(UpdateYStatus());
-
+		camBasePos = new Vector3( 0, 2, -10);
 		maxX = JumpRect.sizeDelta.x;
 		maxY = JumpRect.sizeDelta.y;
+
+		StartCoroutine(CatchWhenFall());
 	}
     void Update() 
 	{
@@ -53,20 +61,19 @@ public class Move2 : MonoBehaviour
 			PhysicsMove();
 			CamMove();
 		}
-		
 	}
     private void PhysicsMove() {
 		//	Shift
-        mSpeed = isGrounded&&(tempS > 5) ? (Input.GetButton("Fire3") ? sprintSpeed : walkSpeed) : walkSpeed;
+		mSpeed = isGrounded&&(tempS > 0) ? (Input.GetButton("Fire3") ? sprintSpeed : walkSpeed) : walkSpeed;
 		MP.mSpeed = mSpeed;
 
 		if (Input.GetButton("Fire3")) {
 			if(tempS > 0)
-				tempS -= 1f;
+				tempS -= SprUsage;
 		}
 		else {
 			if (tempS < 99f)
-				tempS += 1f;
+				tempS += SprRegen;
 		}
 		SprintRect.sizeDelta = Vector2.Lerp(SprintRect.sizeDelta, new Vector2(maxX * tempS / 100, maxY), Time.deltaTime * 10);
 
@@ -77,7 +84,7 @@ public class Move2 : MonoBehaviour
 			inputVelocity = Vector3.MoveTowards(inputVelocity, localInput, Time.deltaTime * 5f);
 		}
 		bool[] onkey = { Input.GetKey(KeyCode.W) , Input.GetKey(KeyCode.S) , Input.GetKey(KeyCode.A) , Input.GetKey(KeyCode.D) };
-		if (isGrounded && onkey.ToList<bool>().Contains(true)) {
+		if (onkey.ToList<bool>().Contains(true)) {
 			MP.ApplyForce(mSpeed * InputFactor, inputVelocity);
 		}
 		
@@ -101,12 +108,19 @@ public class Move2 : MonoBehaviour
 			&& tempS > 0
 			&& isTouchingWall)
 		{
+			isRidingWall = true;
 			MP.conH = true;
 			MP.freezeV = true;
-			StartCoroutine(WallRideSpark());
+			if (!sparking) {
+				StartCoroutine(WallRideSpark());
+				sparking = true;
+			}
 		}
-		else
+		else{
 			MP.freezeV = false;
+			sparking = false;
+			camLerpPos = camBasePos;
+		}
 
 		//	Flight
 		if (canFlight && Input.GetKeyDown(KeyCode.Space)
@@ -125,7 +139,7 @@ public class Move2 : MonoBehaviour
 		if (rx > Screen.width * xbuff)
 			rxnorm = rx / Screen.width;
 		if (rx < Screen.width * (1 - xbuff))
-			rxnorm = (Screen.width * (1 - xbuff) - rx) / (Screen.width * .7f) * -1;
+			rxnorm = (Screen.width * (1 - xbuff) - rx) / (Screen.width * xbuff) * -1;
 
 		if (ry > Screen.height * ybuff)
 			rynorm = ry / Screen.height;
@@ -148,37 +162,49 @@ public class Move2 : MonoBehaviour
 			playerCam.transform.eulerAngles = new Vector3(19.8f, playerCam.transform.eulerAngles.y, 0);
 		if (playerCam.transform.eulerAngles.x < 340f && playerCam.transform.eulerAngles.x > 30f)
 			playerCam.transform.eulerAngles = new Vector3(340.2f, playerCam.transform.eulerAngles.y, 0);
-		//Vector3 vec = Vector3.zero;
-		//playerCam.transform.eulerAngles = Vector3.SmoothDamp(playerCam.transform.eulerAngles, targetAngles, ref vec, 3f);
 
+		Vector3 camTo = camBasePos;
+		if (isRidingWall) {
+			try {
+				camTo += new Vector3(ActiveWall.GetContact(0).normal.x, 0, ActiveWall.GetContact(0).normal.z) * 10;
+			}
+			catch{
+
+			}
+		}
+		playerCam.transform.localPosition = Vector3.Lerp(playerCam.transform.localPosition, 
+			camTo,
+			Time.deltaTime);
 	}
-	private IEnumerator JustJumped() {
 
+	private IEnumerator JustJumped() {
 		tempJ = 0;
 		while (tempJ < 100) {
 			yield return new WaitForSeconds(0.02f);
-			tempJ += 1f;
+			tempJ += JumpRegen;
 		}
 		canJump = true;
 	}
 	private IEnumerator WallRideSpark()
 	{
-		GameObject spark = Instantiate(Resources.Load("Effect/Explosion9") as GameObject);
-		spark.transform.localScale *= 0.05f;
+		GameObject spark = Instantiate(Resources.Load("Effect/Explosion9") as GameObject, transform);
+		spark.transform.localPosition += Vector3.down * 2;
+
 		while(tempS > 0 && Input.GetButton("Fire3"))
 		{
-			spark.transform.position = transform.position + Vector3.down*2;
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(0.1f);
 		}
+		isRidingWall = false;
 		Destroy(spark);
 	}
 	void OnCollisionEnter(Collision collision) {
 		foreach (ContactPoint contact in collision.contacts) {
-			Debug.DrawRay(contact.point, contact.normal, Color.white);
+			Debug.DrawRay(contact.point, contact.normal*10, Color.white, 2f);
 		}
 
 		if (collision.gameObject.name.Contains("Wall")) {
 			isTouchingWall = true;
+			ActiveWall = collision;
 		}
 		if (collision.gameObject.name.Contains("Floor")){
 			isGrounded = true;
@@ -196,6 +222,23 @@ public class Move2 : MonoBehaviour
 		if (collision.gameObject.name.Contains("Floor")) {
 			isGrounded = false;
 			MP.conH = true;
+		}
+	}
+
+	private IEnumerator CatchWhenFall()
+	{
+		int posFixCount = 0;
+		for (; ; ) {
+			yield return new WaitForSeconds(1f);
+			if(posFixCount > 3){
+				//Force player respawn
+
+				posFixCount = 0;
+			}
+			if(transform.position.y < 3){
+				transform.position = new Vector3(transform.position.x, 4, transform.position.z);
+				posFixCount++;
+			}
 		}
 	}
 }

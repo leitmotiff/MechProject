@@ -12,7 +12,6 @@ public class ManualPhysics : MonoBehaviour
 
     public float mass, mSpeed;
     public Vector3 baseAcceleration, acceleration, velocity, deltaD;
-    private Vector3 refP1, refP2;
 
     [HideInInspector]
     public bool conA = false, conV = false, conH = false, freezeV = false;
@@ -21,37 +20,27 @@ public class ManualPhysics : MonoBehaviour
         tr = transform;
         rb = GetComponent<Rigidbody>();
 	}
-
     void Start()
     {
-        InitializeReferences();
-
         baseAcceleration = new Vector3(0, gravMod * gravityF, 0);
         acceleration = Vector3.zero;
     }
     void FixedUpdate()
     {
-        refP1 = transform.position;
-
-        //rb.AddForce(new Vector3(0, gravMod*gravityF,0), ForceMode.Acceleration);
-        //acceleration = new Vector3(Mathf.Clamp(acceleration.x, -mSpeed, mSpeed),acceleration.y, Mathf.Clamp(acceleration.z, -mSpeed, mSpeed));
         Simulate(baseAcceleration + acceleration);
 
         // Eventually apply floor friction, for now is a constant
         Vector3 friction;
-        float fx = -0.4f * acceleration.x, 
-            fy = -0.1f * acceleration.y, 
+        float fx = -0.4f * acceleration.x,
+            fy = -0.1f * acceleration.y,// * (velocity.y > 0 ? -1 : 1), 
             fz = -0.4f * acceleration.z;
         if (conH)
             fx = fz = 0;
         if (conV)
-            fy = 0;
-        
+            fy = 0; 
         friction = new Vector3(fx, fy, fz) + (velocity.y < 0 ? Vector3.down : Vector3.zero);
-        
-        acceleration += friction;
 
-        refP2 = transform.position;
+        acceleration += friction;
     }
 
     // Translate based on current acceleration
@@ -76,13 +65,5 @@ public class ManualPhysics : MonoBehaviour
 	}
     public void ApplyConstantForce(float N, Vector3 direction) {
         conA = true;
-
-
-    }
-
-    private void InitializeReferences()
-    {
-        refP1 = transform.position;
-        refP2 = transform.position;
     }
 }

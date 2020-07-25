@@ -13,6 +13,7 @@ public class MechStats : MonoBehaviour
     public float tempHP = 100;
     private float maxX, maxY, maxHP;
     public RectTransform HealthRect;
+    public StateManager SM;
 
 	private void Start() {
         maxHP = cStats[4];
@@ -23,6 +24,10 @@ public class MechStats : MonoBehaviour
 
 	private void Update() {
         HealthRect.sizeDelta = Vector2.Lerp(HealthRect.sizeDelta, new Vector2(maxX * tempHP / maxHP, maxY), Time.deltaTime);
+        
+        if(tempHP <= 0){
+            SM.PlayerKill(this.transform);
+        }
     }
     public void ResetBaseStats() {
         
@@ -36,5 +41,4 @@ public class MechStats : MonoBehaviour
                 cStats[i.id2] = bStats[i.id2] + i.val2;
         }
 	}
-
 }
