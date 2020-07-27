@@ -9,12 +9,12 @@ public class ModelToWireframe : MonoBehaviour
 	
     void Start()
     {
+		ToWireframe();
+    }
+
+	public void ToWireframe(){
 		ShapeL = GetAllShapes();
 		ShapeWire();
-    }
-	
-	void Update(){
-		
 	}
 	
 	void ShapeWire(){

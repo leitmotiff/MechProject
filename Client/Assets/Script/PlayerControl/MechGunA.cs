@@ -28,17 +28,24 @@ public class MechGunA : MonoBehaviour
 	private StateManager SM;
 	private StatTracker ST;
 
-	public GameObject GunCanvas, MF_image;
+	public GameObject AimPanel, MF_image;
 	
 	#region Startup
 	private void Awake(){
-		cam = GetComponentInChildren<Camera>();
-		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
-		ST = GameObject.Find("EventSystem").GetComponent<StatTracker>();
+		
 	}
     private void Start(){
+		FindMyThings();
+	}
+	public void FindMyThings(){
+		cam = GetComponentInChildren<Camera>();
+		TimerPanel = GameObject.Find("HUD_Canvas").transform.GetChild(1).gameObject;
+		AimPanel = GameObject.Find("HUD_Canvas").transform.GetChild(0).gameObject;
+		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
+		ST = GameObject.Find("EventSystem").GetComponent<StatTracker>();
+
 		timertxt = TimerPanel.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-		
+
 		PlayerTeam = teamColors[0];
 	}
 	private void Update(){
@@ -126,11 +133,11 @@ public class MechGunA : MonoBehaviour
 	
 	private void GatCtrl(bool go){
 		if(go){
-			GunCanvas.SetActive(true);
+			AimPanel.SetActive(true);
 			StartCoroutine("GatGun");
 		}
 		else{
-			GunCanvas.SetActive(false);
+			AimPanel.SetActive(false);
 			StopCoroutine("GatGun");
 		}
 	}

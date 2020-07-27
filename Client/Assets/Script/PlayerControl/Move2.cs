@@ -10,7 +10,7 @@ public class Move2 : MonoBehaviour
 		isTouchingWall = false, isRidingWall = false;
 	public bool invertYAxis = false, isGrounded = false;
 	public float InputFactor = 1000f;
-    private Vector3 inputVelocity;
+    private Vector2 inputVelocity;
 	private Vector3 worldVelocity;
     public float walkSpeed = 2f, sprintSpeed = 5f, airSpeed = 2f, jumpForce = 50f;
 	
@@ -18,11 +18,10 @@ public class Move2 : MonoBehaviour
 	private float maxRotationSpeed = 40f;
 	public float mSpeed = 0;
 	private float rxSpeed = 0, rySpeed = 0;
-	private bool checkYStatus = true;
 	
 	private Rigidbody rb;
 	private Transform targetCam;
-	private Camera playerCam;
+	public Camera playerCam;
 	private Animator anim;
 	private StateManager SM;
 	#endregion
@@ -38,23 +37,29 @@ public class Move2 : MonoBehaviour
 	private Ray WallRay;
 	private Vector3 camBasePos, camLerpPos;
 
-	void Awake(){
-		groundRay = new Ray(transform.position, Vector3.down);
-		MP = GetComponent<ManualPhysics>();
-		rb = GetComponent<Rigidbody>();
-		playerCam = GetComponentInChildren<Camera>();
-		anim = GetComponent<Animator>();
-		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
-	}
     void Start() {
-		//StartCoroutine(UpdateYStatus());
+		groundRay = new Ray(transform.position, Vector3.down);
+		
+
+		FindMyThings();
+
 		camBasePos = new Vector3( 0, 2, -10);
 		maxX = JumpRect.sizeDelta.x;
 		maxY = JumpRect.sizeDelta.y;
 
 		StartCoroutine(CatchWhenFall());
 	}
-    void Update() 
+
+	public void FindMyThings(){
+		playerCam = GetComponentInChildren<Camera>();
+		MP = GetComponent<ManualPhysics>();
+		rb = GetComponent<Rigidbody>();
+		anim = GetComponent<Animator>();
+		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
+		JumpRect = GameObject.Find("JumpBar").GetComponent<RectTransform>();
+		SprintRect = GameObject.Find("SprintBar").GetComponent<RectTransform>();
+	}
+    void FixedUpdate()
 	{
 		if (isPlayer && SM.PlayState) 
 		{
@@ -64,7 +69,7 @@ public class Move2 : MonoBehaviour
 	}
     private void PhysicsMove() {
 		//	Shift
-		mSpeed = isGrounded&&(tempS > 0) ? (Input.GetButton("Fire3") ? sprintSpeed : walkSpeed) : walkSpeed;
+		mSpeed = (tempS > 0) ? (Input.GetButton("Fire3") ? sprintSpeed : walkSpeed) : walkSpeed;
 		MP.mSpeed = mSpeed;
 
 		if (Input.GetButton("Fire3")) {
@@ -78,10 +83,10 @@ public class Move2 : MonoBehaviour
 		SprintRect.sizeDelta = Vector2.Lerp(SprintRect.sizeDelta, new Vector2(maxX * tempS / 100, maxY), Time.deltaTime * 10);
 
 		//	WASD
-		Vector3 localInput = new Vector3();
+		Vector2 localInput = new Vector2();
 		if(canMove){ 
-			localInput = Vector3.ClampMagnitude(transform.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"))), 1f);
-			inputVelocity = Vector3.MoveTowards(inputVelocity, localInput, Time.deltaTime * 5f);
+			localInput = Vector2.ClampMagnitude(transform.TransformDirection(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"))), 1f);
+			inputVelocity = Vector2.MoveTowards(inputVelocity, localInput, Time.deltaTime * 5f);
 		}
 		bool[] onkey = { Input.GetKey(KeyCode.W) , Input.GetKey(KeyCode.S) , Input.GetKey(KeyCode.A) , Input.GetKey(KeyCode.D) };
 		if (onkey.ToList<bool>().Contains(true)) {
@@ -89,7 +94,7 @@ public class Move2 : MonoBehaviour
 		}
 		
 		//	animation
-		if(Mathf.Abs(localInput.x) > 0.5f || Mathf.Abs(localInput.z) > 0.5f) {anim.SetBool("isMoving", true);}
+		if(Mathf.Abs(localInput.x) > 0.5f || Mathf.Abs(localInput.y) > 0.5f) {anim.SetBool("isMoving", true);}
 		else {anim.SetBool("isMoving", false);}
 		
 		//	JUMP
@@ -119,6 +124,7 @@ public class Move2 : MonoBehaviour
 		else{
 			MP.freezeV = false;
 			sparking = false;
+			MP.conH = false;
 			camLerpPos = camBasePos;
 		}
 
@@ -193,6 +199,8 @@ public class Move2 : MonoBehaviour
 		while(tempS > 0 && Input.GetButton("Fire3"))
 		{
 			yield return new WaitForSeconds(0.1f);
+			if (Input.GetButtonUp("Fire3") || isGrounded)
+				break;
 		}
 		isRidingWall = false;
 		Destroy(spark);
@@ -208,7 +216,7 @@ public class Move2 : MonoBehaviour
 		}
 		if (collision.gameObject.name.Contains("Floor")){
 			isGrounded = true;
-			MP.conH = false;
+			//MP.conH = false;
 		}
 	}
 	void OnCollisionExit(Collision collision) {
@@ -221,21 +229,20 @@ public class Move2 : MonoBehaviour
 		}
 		if (collision.gameObject.name.Contains("Floor")) {
 			isGrounded = false;
-			MP.conH = true;
+			//MP.conH = true;
 		}
 	}
-
 	private IEnumerator CatchWhenFall()
 	{
 		int posFixCount = 0;
 		for (; ; ) {
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(0.5f);
 			if(posFixCount > 3){
 				//Force player respawn
 
 				posFixCount = 0;
 			}
-			if(transform.position.y < 3){
+			if(transform.position.y <= 3){
 				transform.position = new Vector3(transform.position.x, 4, transform.position.z);
 				posFixCount++;
 			}

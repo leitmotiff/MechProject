@@ -16,6 +16,12 @@ public class MechStats : MonoBehaviour
     public StateManager SM;
 
 	private void Start() {
+        FindMyThings();
+    }
+
+    public void FindMyThings()
+    {
+        HealthRect = GameObject.Find("HealthBar").GetComponent<RectTransform>();
         maxHP = cStats[4];
         tempHP = maxHP;
         maxX = HealthRect.sizeDelta.x;
@@ -27,6 +33,7 @@ public class MechStats : MonoBehaviour
         
         if(tempHP <= 0){
             SM.PlayerKill(this.transform);
+            tempHP = 1;
         }
     }
     public void ResetBaseStats() {

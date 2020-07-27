@@ -47,7 +47,7 @@ public class ManualPhysics : MonoBehaviour
     private void Simulate(Vector3 a)
     {
         float x = Mathf.Clamp(a.x, -mSpeed, mSpeed);
-        float y = a.y;
+        float y = Mathf.Clamp(a.y, -mSpeed, mSpeed);
         float z = Mathf.Clamp(a.z, -mSpeed, mSpeed);
         a = new Vector3(x, y, z);
 
@@ -57,9 +57,13 @@ public class ManualPhysics : MonoBehaviour
         if (freezeV)
             deltaD.y = 0;
 
-        tr.position = Vector3.Lerp(tr.position, tr.position+deltaD, Time.deltaTime*25);
-	}
+        //tr.position = Vector3.MoveTowards(tr.position, tr.position + deltaD, 1f);
+        tr.position = Vector3.Slerp(tr.position, tr.position+deltaD, Time.deltaTime*50);
+    }
 
+    public void ApplyForce(float N, Vector2 direction) {
+        acceleration += (N / mass) * new Vector3(direction.x, 0, direction.y);
+    }
     public void ApplyForce(float N, Vector3 direction){
         acceleration += (N / mass) * direction;
 	}

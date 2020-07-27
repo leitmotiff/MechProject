@@ -31,7 +31,7 @@ public class StoreItemLibrary : MonoBehaviour {
 
     private void Awake() {
         LoadItemsFromTextFile();
-        MS = GameObject.Find("LocalPlayerMech").GetComponent<MechStats>();
+        //MS = GameObject.Find("LocalPlayerMech(Clone)").GetComponent<MechStats>();
         if (ShopPanel == null) ShopPanel = this.transform.GetChild(2).gameObject;
         if (ScrollViewContent == null) ScrollViewContent = ShopPanel.transform.GetChild(0).GetChild(0).GetChild(0).gameObject;
         if (itemButtonPrefab == null) itemButtonPrefab = ScrollViewContent.transform.GetChild(0).GetChild(0).gameObject;
@@ -95,7 +95,7 @@ public class StoreItemLibrary : MonoBehaviour {
             newB.SetActive(true);
         }
 
-        setCC();
+        //setCC();
     }
 
     public StoreItem GetItem(string name) {

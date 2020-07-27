@@ -13,21 +13,23 @@ public class MenuController : MonoBehaviour
 	public Texture2D cursorTexture;
 
 	private void Awake() {
-		CursorMode cursorMode = CursorMode.Auto;
+		//CursorMode cursorMode = CursorMode.Auto;
 		Vector2 hotSpot = Vector2.zero;
 		//Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
 		Cursor.visible = true;
 	}
 
-	private void Start() {
-		if (AimPanel == null) AimPanel = GameObject.Find("AimPanel");
-		if (ShopPanel == null) ShopPanel = GameObject.Find("ShopPanel");
-		if (SM == null) SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
-		if (ST == null) ST = GameObject.Find("EventSystem").GetComponent<StatTracker>();
+	public void FindMyThings()
+	{
+		AimPanel = GameObject.Find("AimPanel");
+		ShopPanel = GameObject.Find("ShopPanel");
+		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
+		ST = GameObject.Find("EventSystem").GetComponent<StatTracker>();
 	}
 
 	private void Update() {
 		if(Input.GetKeyDown(KeyCode.M)){
+			FindMyThings();
 			shopmenu = !shopmenu;
 			SM.PlayState = !shopmenu;
 			SM.PausedState = shopmenu;

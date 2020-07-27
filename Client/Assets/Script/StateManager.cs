@@ -6,10 +6,13 @@ public class StateManager : MonoBehaviour
 {
     public bool PausedState = false, PlayState = false, MenuState = false, PlayerDeathState = false;
 	public Transform RespawnLocation;
-	public GameObject winScreen, loseScreen;
+	public GameObject winScreen, loseScreen, spawnScreen;
 	public GameObject P;
 
 	private List<Transform> obsToDestroy = new List<Transform>();
+	public GameObject LocalPlayerPrefab;
+	public Transform playerCam;
+	public float respawnTime = 5f;
 
 	public void WinCondition(string LoseTeam){
 		Debug.Log("GameOver!");
@@ -27,7 +30,7 @@ public class StateManager : MonoBehaviour
 
 		PlayState = false;
 		PlayerDeathState = true;
-		Transform playerCam = playerBod.GetComponentInChildren<Camera>().gameObject.transform;
+		playerCam = playerBod.GetComponentInChildren<Camera>().gameObject.transform;
 		playerCam.SetParent(null);
 
 		//Seperate all children from playerbod, then destroy player empty object so pieces fall and player input is killed
@@ -38,14 +41,65 @@ public class StateManager : MonoBehaviour
 				cube.GetComponent<BoxCollider>().enabled = true;
 				cube.gameObject.AddComponent<Rigidbody>().useGravity = true;
 				cube.GetComponent<Rigidbody>().AddExplosionForce(200, playerBod.position+Vector3.forward, 5);
-				//cube.GetComponent<Rigidbody>().AddTorque(Vector3.back * 100);
 				obsToDestroy.Add(cube);
 			}
 		}
-		Destroy(playerBod.gameObject);
 
 		//Send camera to respawn location
 		playerCam.GetComponent<FloatToTransform>().StartFloatRoutine(playerBod, RespawnLocation);
+		StartCoroutine(RespawnPlayer(playerBod));
+	}
 
+	public IEnumerator RespawnPlayer(Transform oldBod)
+	{
+		yield return new WaitForSeconds(3f);
+
+		Destroy(oldBod.gameObject);
+
+		StartCoroutine(IESpawnPlayer());
+
+		foreach (Transform cube in obsToDestroy) {
+			Destroy(cube.gameObject);
+			yield return new WaitForSeconds(0.2f);
+		}
+
+		PlayerDeathState = false;
+	}
+
+	public void SpawnPlayer(){
+		StartCoroutine(IESpawnPlayer());
+		spawnScreen.SetActive(false);
+	}
+	private IEnumerator IESpawnPlayer()
+	{
+#pragma warning disable
+		GameObject newP = Instantiate(LocalPlayerPrefab, RespawnLocation.position, new Quaternion(0, 0, 0, 0), null);
+#pragma warning restore
+		playerCam.SetParent(newP.transform);
+		playerCam.GetComponent<FloatToTransform>().FloatToBase();
+		P = newP;
+		newP.GetComponent<ManualPhysics>().enabled = false;
+
+		newP.GetComponent<Move2>().enabled = false;
+		newP.GetComponent<ModelToWireframe>().ToWireframe();
+
+		Transform[] childObs = newP.GetComponentsInChildren<Transform>();
+		foreach (Transform cube in childObs) {
+			if(!cube.name.Contains("Camera") && !cube.name.Contains("Player"))
+				cube.gameObject.SetActive(false);
+		}
+
+		foreach (Transform cube in childObs) {
+			yield return new WaitForSeconds(respawnTime / childObs.Length);
+			cube.gameObject.SetActive(true);
+		}
+
+		newP.GetComponent<MechStats>().FindMyThings();
+		newP.GetComponent<MechGunA>().FindMyThings();
+		newP.GetComponent<Move2>().FindMyThings();
+
+		newP.GetComponent<ManualPhysics>().enabled = true;
+		newP.GetComponent<Move2>().enabled = true;
+		PlayState = true;
 	}
 }
