@@ -53,7 +53,10 @@ public class MechGunA : MonoBehaviour
 		PlayerTeam = teamColors[0];
 	}
 	private void Update(){
-		switch(GunSelected){
+		AimArm();
+		ArmModel.eulerAngles = aimAngles;
+
+		switch (GunSelected){
 			case 1:
 				hitDmg = 20;
 				Gun_1();
@@ -68,15 +71,6 @@ public class MechGunA : MonoBehaviour
 				hitDmg = 1;
 				Gun_0();
 				break;
-		}
-        
-		AimArm();
-		ArmModel.eulerAngles = aimAngles;
-
-
-		// HackLink
-		if(linkActive){
-			LinkMoveUpdate();
 		}
     }
 	#endregion
@@ -112,31 +106,45 @@ public class MechGunA : MonoBehaviour
 	private void HackLink(bool go) {
 		if (go) {
 			StartCoroutine(HackLink());
-			StartCoroutine(CountDownTimer(6f));
+			//StartCoroutine(CountDownTimer(6f));
 		}
 		else {
 			StopCoroutine(HackLink());
-			StopCoroutine(CountDownTimer(6f));
-			closeTimer();
+			//StopCoroutine(CountDownTimer(6f));
+			//closeTimer();
 			linkActive = false;
 		}
 	}
 	private IEnumerator HackLink(){
-		yield return new WaitForSeconds(3f);
-		//Waiit for a few seconds, then spawn blue rope link here
-		linkObj = Instantiate(hackLinkPrefab, this.transform.position, new Quaternion(0, 0, 0, 0), this.transform);
-		linkActive = true;
 		
-
-		yield return new WaitForSeconds(3f);
+		//Waiit for a few seconds, then spawn blue rope link here
+		//Shoot 3 times, then clear
+		linkObj = Instantiate(hackLinkPrefab, this.transform.position, new Quaternion(0, 0, 0, 0), this.transform);
+		linkObj.SetActive(false);
+		StartCoroutine(HackLinkMove());
+		yield return new WaitForSeconds(5f);
 		//If time has completed and link has not been severed, apply status to enemy
-		linkActive = false;
+
+		Destroy(linkObj);
 	}
-	private void LinkMoveUpdate(){
-		linkObj.transform.position = Vector3.Lerp(linkObj.transform.position, hit.point, Time.deltaTime);
+	private IEnumerator HackLinkMove() {
+		
+		for (int i = 3; i > 0; i--) {
+			linkObj.transform.position = transform.position;
+			Vector3 startPos = linkObj.transform.position;
+			Physics.Raycast(ray, out hit);
+			linkObj.SetActive(true);
+			float startTime = Time.time;
+			while (Time.time < startTime + 1f) {
+				linkObj.transform.position = Vector3.Lerp(startPos, hit.point, Time.deltaTime);
+				yield return null;
+			}
+			linkObj.SetActive(false);
+		}
+		
 	}
 
-	private void ChargeFireCtrl(bool go){
+		private void ChargeFireCtrl(bool go){
 		if(go){
 			StartCoroutine("ChargeFire");
 			StartCoroutine(CountDownTimer(LOFtime));

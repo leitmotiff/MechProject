@@ -611,6 +611,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 698577329830816246, guid: fa70bcbd457e1654fa0aadfc5c2bc202,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 785669107593163452, guid: fa70bcbd457e1654fa0aadfc5c2bc202,
+        type: 3}
+      propertyPath: jumpForce
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 4161985737628193040, guid: fa70bcbd457e1654fa0aadfc5c2bc202,
         type: 3}
       propertyPath: m_Name
@@ -679,7 +689,7 @@ PrefabInstance:
     - target: {fileID: 4161985737628193043, guid: fa70bcbd457e1654fa0aadfc5c2bc202,
         type: 3}
       propertyPath: GunSelected
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fa70bcbd457e1654fa0aadfc5c2bc202, type: 3}
