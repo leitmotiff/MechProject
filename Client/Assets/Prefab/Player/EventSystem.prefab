@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &941892504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 941892505}
+  m_Layer: 0
+  m_Name: RespawnZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &941892505
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 941892504}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 27.89, y: 50, z: -47.65}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8316551714434520827}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8316551714434520806
 GameObject:
   m_ObjectHideFlags: 0
@@ -29,7 +59,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 941892505}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -48,6 +79,16 @@ MonoBehaviour:
   PausedState: 0
   PlayState: 1
   MenuState: 0
+  PlayerDeathState: 0
+  RespawnLocation: {fileID: 941892505}
+  winScreen: {fileID: 0}
+  loseScreen: {fileID: 0}
+  spawnScreen: {fileID: 0}
+  P: {fileID: 0}
+  LocalPlayerPrefab: {fileID: 4161985737628193040, guid: fa70bcbd457e1654fa0aadfc5c2bc202,
+    type: 3}
+  playerCam: {fileID: 0}
+  respawnTime: 1
 --- !u!114 &8316551714434520824
 MonoBehaviour:
   m_ObjectHideFlags: 0

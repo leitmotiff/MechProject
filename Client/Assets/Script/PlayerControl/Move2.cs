@@ -6,11 +6,11 @@ using UnityEngine;
 public class Move2 : MonoBehaviour
 {
 	#region Old Var
-	public bool isPlayer = false, canMove = true, canWallRide = false, canJump = true, canFlight = false,
+	public bool isPlayer = false, canMove = true, canWallRide = false, canFlight = false,
 		isTouchingWall = false, isRidingWall = false;
 	public bool invertYAxis = false, isGrounded = false;
 	public float InputFactor = 1000f;
-    private Vector2 inputVelocity;
+    private Vector3 inputVelocity;
 	private Vector3 worldVelocity;
     public float walkSpeed = 2f, sprintSpeed = 5f, airSpeed = 2f, jumpForce = 50f;
 	
@@ -20,7 +20,6 @@ public class Move2 : MonoBehaviour
 	private float rxSpeed = 0, rySpeed = 0;
 	
 	private Rigidbody rb;
-	private Transform targetCam;
 	public Camera playerCam;
 	private Animator anim;
 	private StateManager SM;
@@ -40,7 +39,6 @@ public class Move2 : MonoBehaviour
     void Start() {
 		groundRay = new Ray(transform.position, Vector3.down);
 		
-
 		FindMyThings();
 
 		camBasePos = new Vector3( 0, 2, -10);
@@ -58,8 +56,15 @@ public class Move2 : MonoBehaviour
 		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
 		JumpRect = GameObject.Find("JumpBar").GetComponent<RectTransform>();
 		SprintRect = GameObject.Find("SprintBar").GetComponent<RectTransform>();
+
+		if(playerCam == null){
+			playerCam = Camera.main;
+			playerCam.transform.SetParent(this.transform);
+			//playerCam.GetComponent<FloatToTransform>().
+			playerCam.GetComponent<FloatToTransform>().FloatToBase();
+		}
 	}
-    void FixedUpdate()
+    void Update()
 	{
 		if (isPlayer && SM.PlayState) 
 		{
@@ -83,13 +88,13 @@ public class Move2 : MonoBehaviour
 		SprintRect.sizeDelta = Vector2.Lerp(SprintRect.sizeDelta, new Vector2(maxX * tempS / 100, maxY), Time.deltaTime * 10);
 
 		//	WASD
-		Vector2 localInput = new Vector2();
-		if(canMove){ 
-			localInput = Vector2.ClampMagnitude(transform.TransformDirection(new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"))), 1f);
-			inputVelocity = Vector2.MoveTowards(inputVelocity, localInput, Time.deltaTime * 5f);
+		Vector3 localInput = new Vector3();
+		if(canMove){
+			localInput = Vector3.ClampMagnitude(transform.TransformDirection(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"))), 1f);
+			inputVelocity = Vector3.MoveTowards(inputVelocity, localInput, Time.deltaTime * 5f);
 		}
 		bool[] onkey = { Input.GetKey(KeyCode.W) , Input.GetKey(KeyCode.S) , Input.GetKey(KeyCode.A) , Input.GetKey(KeyCode.D) };
-		if (onkey.ToList<bool>().Contains(true)) {
+		if (onkey.ToList().Contains(true)) {
 			MP.ApplyForce(mSpeed * InputFactor, inputVelocity);
 		}
 		
@@ -99,9 +104,8 @@ public class Move2 : MonoBehaviour
 		
 		//	JUMP
 		if (Input.GetKeyDown(KeyCode.Space)
-			&& canJump)
+			&& tempJ > 80)
 		{
-			canJump = false;
 			StartCoroutine(JustJumped());
 			MP.ApplyForce(jumpForce * InputFactor * 10, Vector3.up);
 		}
@@ -109,7 +113,6 @@ public class Move2 : MonoBehaviour
 
 		//	WallRide
 		if (canWallRide && Input.GetButton("Fire3")
-			&& !isGrounded
 			&& tempS > 0
 			&& isTouchingWall)
 		{
@@ -126,14 +129,6 @@ public class Move2 : MonoBehaviour
 			sparking = false;
 			MP.conH = false;
 			camLerpPos = camBasePos;
-		}
-
-		//	Flight
-		if (canFlight && Input.GetKeyDown(KeyCode.Space)
-			&& !isGrounded
-			&& !isTouchingWall) 
-		{
-			
 		}
 	}
 	private void CamMove()
@@ -189,7 +184,6 @@ public class Move2 : MonoBehaviour
 			yield return new WaitForSeconds(0.02f);
 			tempJ += JumpRegen;
 		}
-		canJump = true;
 	}
 	private IEnumerator WallRideSpark()
 	{
@@ -209,14 +203,12 @@ public class Move2 : MonoBehaviour
 		foreach (ContactPoint contact in collision.contacts) {
 			Debug.DrawRay(contact.point, contact.normal*10, Color.white, 2f);
 		}
-
 		if (collision.gameObject.name.Contains("Wall")) {
 			isTouchingWall = true;
 			ActiveWall = collision;
 		}
 		if (collision.gameObject.name.Contains("Floor")){
 			isGrounded = true;
-			//MP.conH = false;
 		}
 	}
 	void OnCollisionExit(Collision collision) {
@@ -229,21 +221,20 @@ public class Move2 : MonoBehaviour
 		}
 		if (collision.gameObject.name.Contains("Floor")) {
 			isGrounded = false;
-			//MP.conH = true;
 		}
 	}
 	private IEnumerator CatchWhenFall()
 	{
 		int posFixCount = 0;
 		for (; ; ) {
-			yield return new WaitForSeconds(0.5f);
+			yield return new WaitForSeconds(0.3f);
 			if(posFixCount > 3){
 				//Force player respawn
 
 				posFixCount = 0;
 			}
 			if(transform.position.y <= 3){
-				transform.position = new Vector3(transform.position.x, 4, transform.position.z);
+				transform.position = new Vector3(transform.position.x, 5, transform.position.z);
 				posFixCount++;
 			}
 		}

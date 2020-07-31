@@ -23,13 +23,17 @@ public class MechGunA : MonoBehaviour
 	public float rayFit = -10f;
 	private Ray ray;
 	
-	public GameObject TimerPanel;
+	public GameObject TimerPanel, hackLinkPrefab;
 	private TextMeshProUGUI timertxt;
 	private StateManager SM;
 	private StatTracker ST;
 
 	public GameObject AimPanel, MF_image;
-	
+
+	private bool linkActive = false;
+	private GameObject linkObj;
+	private RaycastHit hit;
+
 	#region Startup
 	private void Awake(){
 		
@@ -68,13 +72,23 @@ public class MechGunA : MonoBehaviour
         
 		AimArm();
 		ArmModel.eulerAngles = aimAngles;
+
+
+		// HackLink
+		if(linkActive){
+			LinkMoveUpdate();
+		}
     }
 	#endregion
 	
 	#region Gun List
 	// Tech Attack
 	void Gun_2(){
-	
+		if (Input.GetButtonDown("Fire1") && SM.PlayState)
+			HackLink(true);
+		if (Input.GetButtonUp("Fire1") && SM.PlayState) {
+			HackLink(false);
+		}
 	}
 	// Charge Shot
 	void Gun_1(){
@@ -95,24 +109,31 @@ public class MechGunA : MonoBehaviour
 	#endregion
 
 	#region Gun Control
-	private void TechLasso(bool go) {
+	private void HackLink(bool go) {
 		if (go) {
-			StartCoroutine("TechLasso");
+			StartCoroutine(HackLink());
 			StartCoroutine(CountDownTimer(6f));
 		}
 		else {
-			StopCoroutine("TechLasso");
+			StopCoroutine(HackLink());
 			StopCoroutine(CountDownTimer(6f));
 			closeTimer();
+			linkActive = false;
 		}
 	}
-	private IEnumerator TechLasso(){
+	private IEnumerator HackLink(){
 		yield return new WaitForSeconds(3f);
 		//Waiit for a few seconds, then spawn blue rope link here
+		linkObj = Instantiate(hackLinkPrefab, this.transform.position, new Quaternion(0, 0, 0, 0), this.transform);
+		linkActive = true;
+		
 
 		yield return new WaitForSeconds(3f);
 		//If time has completed and link has not been severed, apply status to enemy
-
+		linkActive = false;
+	}
+	private void LinkMoveUpdate(){
+		linkObj.transform.position = Vector3.Lerp(linkObj.transform.position, hit.point, Time.deltaTime);
 	}
 
 	private void ChargeFireCtrl(bool go){
@@ -173,7 +194,6 @@ public class MechGunA : MonoBehaviour
 		}
 	}
 	private void DebugAimShot(){
-		RaycastHit hit;
 		StartCoroutine(MuzzleFlash());
 		if (Physics.Raycast(ray, out hit)){
             objectHit = hit.transform;

@@ -32,7 +32,6 @@ public class FloatToTransform : MonoBehaviour
 
         if(flag1)
             transform.localPosition = Vector3.Lerp(transform.localPosition, PlayerBasePos, Time.deltaTime);
-
     }
 
     //Respawn float

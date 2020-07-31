@@ -11,24 +11,26 @@ public class DummyMove : MonoBehaviour
 		"OrangeTeam"};
 	[Range(0,3)]
 	public int movementType;
-	public int speed = 12, hitDmg = 1;
+	public int speed = 6, sprintSpeed = 12, hitDmg = 1;
 	private float radius, range = 5;
 	public GameObject PathGO;
-	public Transform[] path;
-	private Transform cNode, blank;
+	public Vector3[] path;
+	private Vector3 cNode, blank;
 	public bool canMove = true, canFight = true;
 	public bool isMoving = false, isFighting = false;
 	private int q = 1;
+	private Rigidbody rb;
 	
 	public List<GameObject> EnemiesInRange = new List<GameObject>();
 	public List<GameObject> EnemiesInSight = new List<GameObject>();
 	
     void Start(){
+		rb = GetComponent<Rigidbody>();
 		radius = GetComponent<SphereCollider>().radius;
 		range = radius*radius;
 		StartCoroutine(CheckRange());
 		if(PathGO != null){
-			path = PathGO.GetComponentsInChildren<Transform>();
+			path = PathGO.GetComponent<PathClass>().nodePositions.ToArray();
 			cNode = path[q];
 		}
     }
@@ -82,18 +84,21 @@ public class DummyMove : MonoBehaviour
 	}
 
 	private void FollowPathNodes(){
-		Vector3 directionOfTravel = cNode.position - this.transform.position;
+		Vector3 directionOfTravel = cNode - this.transform.position;
         directionOfTravel.Normalize();
-		if(canMove){
-			this.transform.Translate(
-				(directionOfTravel.x * speed * Time.deltaTime),
-				(0f),
-				(directionOfTravel.z * speed * Time.deltaTime),
-				Space.World);
-		}
 
-		if(Mathf.Abs(transform.position.x - cNode.position.x) < 1f && 
-			Mathf.Abs(transform.position.z - cNode.position.z) < 1f)
+		/*Vector3 newVec = ((directionOfTravel.x * speed * Time.deltaTime),
+				(0f),
+				(directionOfTravel.z * speed * Time.deltaTime)_;
+
+		if (canMove){
+			this.transform.Translate(newVec, Space.World);
+		}*/
+		rb.AddForce(directionOfTravel * speed);
+
+
+		if (Mathf.Abs(transform.position.x - cNode.x) < 1f && 
+			Mathf.Abs(transform.position.z - cNode.z) < 1f)
 		{
 			q++;
 			if(q < path.Length)
