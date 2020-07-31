@@ -17,6 +17,10 @@ public class MenuController : MonoBehaviour
 		Vector2 hotSpot = Vector2.zero;
 		//Cursor.SetCursor(cursorTexture, hotSpot, cursorMode);
 		Cursor.visible = true;
+
+	}
+	private void Start() {
+		FindMyThings();
 	}
 
 	public void FindMyThings()
@@ -28,7 +32,7 @@ public class MenuController : MonoBehaviour
 	}
 
 	private void Update() {
-		if(Input.GetKeyDown(KeyCode.M)){
+		if(SM.PlayState && Input.GetKeyDown(KeyCode.M)){
 			FindMyThings();
 			shopmenu = !shopmenu;
 			SM.PlayState = !shopmenu;

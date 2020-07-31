@@ -90,6 +90,7 @@
     <Compile Include="Assets\3rdParty\IKgit\Assets\Scripts\SpikeGen.cs" />
     <Compile Include="Assets\3rdParty\IKgit\Assets\Scripts\TimeController.cs" />
     <Compile Include="Assets\ColorToTeam.cs" />
+    <Compile Include="Assets\ConsoleCommand.cs" />
     <Compile Include="Assets\FloatToTransform.cs" />
     <Compile Include="Assets\GameClient\Scripts\CameraController.cs" />
     <Compile Include="Assets\GameClient\Scripts\Client.cs" />
