@@ -18,7 +18,7 @@ public class MechGunA : MonoBehaviour
 	public Transform ArmModel;
 	private Transform objectHit;
 	private Vector3 aimAngles = Vector3.zero;
-	public int hitDmg = 1;
+	public int hitDmg = 1, hitRange = 100;
 	private float LOFtime = 4, t, ft;
 	public float rayFit = -10f;
 	private Ray ray;
@@ -42,7 +42,7 @@ public class MechGunA : MonoBehaviour
 		FindMyThings();
 	}
 	public void FindMyThings(){
-		cam = GetComponentInChildren<Camera>();
+		cam = Camera.main;
 		TimerPanel = GameObject.Find("HUD_Canvas").transform.GetChild(1).gameObject;
 		AimPanel = GameObject.Find("HUD_Canvas").transform.GetChild(0).gameObject;
 		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
@@ -187,10 +187,17 @@ public class MechGunA : MonoBehaviour
 	#region Debug / Flavor
 	private void AimArm(){
 		if(Input.GetButton("Fire1") && SM.PlayState){
+			//first get hit point
 			RaycastHit hit;
 			ray = cam.ScreenPointToRay(Input.mousePosition);
 			Physics.Raycast(ray, out hit);
-			
+			Vector3 hitpoint = hit.point;
+			Vector3 newDir = ((hitpoint)-(transform.localPosition + (Vector3.forward / 5))).normalized;
+			//then set ray to hit that point from transform rather than cam
+			ray.origin = transform.localPosition + (Vector3.forward / 5);
+			ray.direction = newDir;
+			Physics.Raycast(ray, out hit);
+			if (hit.collider != null && hit.collider.gameObject.name != null) Debug.Log(hit.collider.gameObject.name);
 			//aimAngles = new Vector3(-ray.direction.z, 0, ray.direction.x)*hit.distance 
 				//		+ new Vector3(-20, transform.eulerAngles.y,rayFit);
 			aimAngles = new Vector3(-90, transform.eulerAngles.y,0);
@@ -203,16 +210,21 @@ public class MechGunA : MonoBehaviour
 	}
 	private void DebugAimShot(){
 		StartCoroutine(MuzzleFlash());
-		if (Physics.Raycast(ray, out hit)){
+		if (Physics.Raycast(ray, out hit) && hit.distance < hitRange){
             objectHit = hit.transform;
 			Debug.DrawRay(transform.position, ray.direction * hit.distance, Color.blue, 2f);
 			
 			IEnumerator routine = BulletHitSpark(hit);
 			StartCoroutine(routine);
-			
-			if(teamColors.Contains(hit.collider.tag) && hit.collider.tag != PlayerTeam)
-				if(hit.collider.GetComponent<COMP_stat>())
+
+			if (teamColors.Contains(hit.collider.tag) && hit.collider.tag != PlayerTeam) {
+				if (hit.collider.GetComponent<COMP_stat>()) {
 					hit.collider.GetComponent<COMP_stat>().HP -= hitDmg;
+				}
+				if (hit.collider.GetComponent<MobaHeart>()) {
+					hit.collider.GetComponent<MobaHeart>().HP -= hitDmg;
+				}
+			}
 		
 		}
 	}

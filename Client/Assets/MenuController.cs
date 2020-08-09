@@ -9,6 +9,7 @@ public class MenuController : MonoBehaviour
 	public GameObject ShopPanel, AimPanel;
 	private StateManager SM;
 	private StatTracker ST;
+	public bool canMenu = true;
 	private bool shopmenu = false;
 	public Texture2D cursorTexture;
 
@@ -20,20 +21,21 @@ public class MenuController : MonoBehaviour
 
 	}
 	private void Start() {
+		shopmenu = false;
 		FindMyThings();
 	}
 
 	public void FindMyThings()
 	{
 		AimPanel = GameObject.Find("AimPanel");
-		ShopPanel = GameObject.Find("ShopPanel");
+		//ShopPanel = GameObject.Find("ShopPanel");
 		SM = GameObject.Find("EventSystem").GetComponent<StateManager>();
 		ST = GameObject.Find("EventSystem").GetComponent<StatTracker>();
 	}
 
 	private void Update() {
-		if(SM.PlayState && Input.GetKeyDown(KeyCode.M)){
-			FindMyThings();
+		if(canMenu && Input.GetKeyDown(KeyCode.M)){
+			//FindMyThings();
 			shopmenu = !shopmenu;
 			SM.PlayState = !shopmenu;
 			SM.PausedState = shopmenu;
