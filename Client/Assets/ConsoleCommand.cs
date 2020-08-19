@@ -23,7 +23,7 @@ public class ConsoleCommand : MonoBehaviour
 			SM.PlayState = !SM.PlayState;
 			SM.PausedState = !SM.PausedState;
 
-			transform.GetChild(0).gameObject.SetActive(SM.PausedState);
+			//transform.GetChild(0).gameObject.SetActive(SM.PausedState);
 		}
 
 		if(consoleOn && Input.GetKeyDown(KeyCode.Return)) {

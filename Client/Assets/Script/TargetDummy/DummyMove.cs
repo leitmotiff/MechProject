@@ -16,7 +16,7 @@ public class DummyMove : MonoBehaviour
 	public GameObject PathGO;
 	public Vector3[] path;
 	private Vector3 cNode, blank;
-	public bool canMove = true, canFight = true;
+	public bool pathReverse = false, canMove = true, canFight = true;
 	public bool isMoving = false, isFighting = false;
 	private int q = 1;
 	private Rigidbody rb;
@@ -31,6 +31,9 @@ public class DummyMove : MonoBehaviour
 		StartCoroutine(CheckRange());
 		if(PathGO != null){
 			path = PathGO.GetComponent<PathClass>().nodePositions.ToArray();
+			if(pathReverse){
+				path.Reverse();
+			}
 			cNode = path[q];
 		}
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+#pragma warning disable
 public class PilotGen : MonoBehaviour
 {
 	#region Pilot

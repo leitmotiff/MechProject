@@ -7,11 +7,12 @@ using UnityEngine;
 
 public class StoreButtonBehave : MonoBehaviour
 {
-	public StoreItemLibrary SIL;
+	public StoreItemLibrary SIL = new StoreItemLibrary();
 	
 	public void TaskOnClick() {
 		SIL.buttonName = GetComponentInChildren<TextMeshProUGUI>().text;
 		SIL.holdItem = SIL.GetItem(SIL.buttonName);
+		Debug.Log(SIL.buttonName + " button.");
     }
 
 	public void BUYbutton(){
