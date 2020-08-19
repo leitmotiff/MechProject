@@ -18,12 +18,10 @@ public class StateManager : MonoBehaviour
 		Debug.Log("GameOver!");
 		
 		// Can be redone by placing over HUD
-		/*
 		if(P.tag == LoseTeam)
 			Instantiate(loseScreen, P.transform.GetChild(0).transform.forward, P.transform.localRotation, P.transform.GetChild(0).transform);
 		else
 			Instantiate(winScreen, P.transform.GetChild(0).transform.forward, P.transform.localRotation, P.transform.GetChild(0).transform);
-			*/
 	}
 
 	public void PlayerKill(Transform playerBod = null){
@@ -80,9 +78,9 @@ public class StateManager : MonoBehaviour
 		playerCam.SetParent(newP.transform);
 		playerCam.GetComponent<FloatToTransform>().FloatToBase();
 		P = newP;
-		//newP.GetComponent<ManualPhysics>().enabled = false;
+		newP.GetComponent<ManualPhysics>().enabled = false;
 
-		newP.GetComponent<Move3>().enabled = false;
+		newP.GetComponent<Move2>().enabled = false;
 		newP.GetComponent<ModelToWireframe>().ToWireframe();
 
 		Transform[] childObs = newP.GetComponentsInChildren<Transform>();
@@ -98,10 +96,10 @@ public class StateManager : MonoBehaviour
 
 		newP.GetComponent<MechStats>().FindMyThings();
 		newP.GetComponent<MechGunA>().FindMyThings();
-		//newP.GetComponent<Move3>().FindMyThings();
+		newP.GetComponent<Move2>().FindMyThings();
 
-		//newP.GetComponent<ManualPhysics>().enabled = true;
-		newP.GetComponent<Move3>().enabled = true;
+		newP.GetComponent<ManualPhysics>().enabled = true;
+		newP.GetComponent<Move2>().enabled = true;
 		PlayState = true;
 	}
 }

@@ -14,10 +14,7 @@ public class COMP_stat : MonoBehaviour
 	}
 	
 	private IEnumerator Die(){
-		if(GetComponent<DummyMove>())
-			GetComponent<DummyMove>().enabled = false;
-		if(GetComponent<DefenseTower>())
-			GetComponent<DefenseTower>().enabled = false;
+		this.GetComponent<DummyMove>().enabled = false;
 		GameObject go = Instantiate(deathExplosion, this.transform.position, new Quaternion(0,0,0,0), this.transform);
 		go.transform.localScale *= .1f;
 		yield return new WaitForSeconds(1f);

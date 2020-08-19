@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class minionSpawner : MonoBehaviour
 {
-
+	public bool canSpawn = true;
 	public GameObject MinionPrefab;
-	public bool canSpawn = true, pathReverse = false;
 	public GameObject PathGO;
 	public float tBMinions = 0.5f, tBGroups = 10f;
 	private string[] teamColors = {"GreenTeam",
@@ -48,7 +47,6 @@ public class minionSpawner : MonoBehaviour
 				newMin.GetComponent<DummyMove>().movementType = 3;
 				newMin.tag = PlayerTeam;
 				//newMin.GetComponent<MeshRenderer>().material = teamMat;
-				newMin.GetComponent<DummyMove>().pathReverse = pathReverse;
 				newMin.SetActive(true);
 				yield return new WaitForSeconds(tBMinions);
 			}
