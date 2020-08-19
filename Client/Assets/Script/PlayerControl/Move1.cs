@@ -13,7 +13,7 @@ public class Move1 : MonoBehaviour
 	
     private float rotateInputFactor = 100f, rotationSpeed = 100f;
 	private float maxRotationSpeed = 20f;
-	//private float averageRotationRadius = 100f;
+	private float averageRotationRadius = 100f;
 	public float mSpeed = 0;
 	private float rxSpeed = 0, rySpeed = 0;
 	public bool invertYAxis = false, isGrounded = false;
